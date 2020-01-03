@@ -1,0 +1,149 @@
+<html class="translated-ltr">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>精灵示范</title>
+    <style type="text/css">#draw-target { width:480px; height:320px; background-color:#ccf; position:relative; }</style>
+    <script type="text/javascript">// IE6 background image caching fix.
+    // Include this JavaScript a the top of your page.
+    try {
+        document.execCommand("BackgroundImageCache", false, true);
+    } catch(e) {}</script>
+    <script src="js/jQuery-3.3.1.min.js"></script>
+    <script type="text/javascript">var DHTMLSprite = function(params) {
+        var width = params.width,
+            height = params.height,
+            imagesWidth = params.imagesWidth,
+            $element = params.$drawTarget.append('<div/>').find(':last'),
+            elemStyle = $element[0].style,
+            mathFloor = Math.floor;
+        $element.css({
+            position: 'absolute',
+            width: width,
+            height: height,
+            backgroundImage: 'url(' + params.images + ')'
+        });
+        var that = {
+            draw: function(x, y) {
+                elemStyle.left = x + 'px';
+                elemStyle.top = y + 'px';
+            },
+            changeImage: function(index) {
+                index *= width;
+                var vOffset = -mathFloor(index / imagesWidth) * height;
+                var hOffset = -index % imagesWidth;
+                elemStyle.backgroundPosition = hOffset + 'px ' + vOffset + 'px';
+            },
+            show: function() {
+                elemStyle.display = 'block';
+            },
+            hide: function() {
+                elemStyle.display = 'none';
+            },
+            destroy: function() {
+                $element.remove();
+            }
+        };
+        return that;
+    };
+    var bouncySprite = function(params) {
+        var x = params.x,
+            y = params.y,
+            xDir = params.xDir,
+            yDir = params.yDir,
+            maxX = params.maxX,
+            maxY = params.maxY,
+            animIndex = 0,
+            that = DHTMLSprite(params);
+        that.moveAndDraw = function() {
+            x += xDir;
+            y += yDir;
+            animIndex += xDir > 0 ? 1 : -1;
+            animIndex %= 5;
+            animIndex += animIndex < 0 ? 5 : 0;
+            if ((xDir < 0 && x < 0) || (xDir > 0 && x >= maxX)) {
+                xDir = -xDir;
+            }
+            if ((yDir < 0 && y < 0) || (yDir > 0 && y >= maxY)) {
+                yDir = -yDir;
+            }
+            that.changeImage(animIndex);
+            that.draw(x, y);
+        };
+        return that;
+    };
+
+    var bouncyBoss = function(numBouncy, $drawTarget) {
+        var bouncys = [];
+
+        for (var i = 0; i < numBouncy; i++) {
+            bouncys.push(bouncySprite({
+                images: 'images/cogs.png',
+                imagesWidth: 256,
+                width: 64,
+                height: 64,
+                $drawTarget: $drawTarget,
+                x: Math.random() * ($drawTarget.width() - 64),
+                y: Math.random() * ($drawTarget.height() - 64),
+                xDir: Math.random() * 4 - 2,
+                yDir: Math.random() * 4 - 2,
+                maxX: $drawTarget.width() - 64,
+                maxY: $drawTarget.height() - 64
+            }));
+        }
+        var moveAll = function() {
+            var len = bouncys.length;
+            for (var i = 0; i < len; i++) {
+                bouncys[i].moveAndDraw();
+            }
+            setTimeout(moveAll, 10);
+        }
+        moveAll();
+    };
+
+    $(document).ready(function() {
+        bouncyBoss(30, $('#draw-target'));
+    });</script>
+    <link type="text/css" rel="stylesheet" charset="UTF-8" href="https://translate.googleapis.com/translate_static/css/translateelement.css"></head>
+
+<body>
+<p>
+    <font style="vertical-align: inherit;">
+        <font style="vertical-align: inherit;">DHTML演示。</font>
+        <font style="vertical-align: inherit;">许多精灵被移动和动画化。</font></font>
+</p>
+<div id="draw-target"></div>
+<div id="goog-gt-tt" class="skiptranslate" dir="ltr">
+    <div style="padding: 8px;">
+        <div>
+            <div class="logo">
+                <img src="images/code1.png" width="20" height="20" alt="Google 翻译"></div>
+        </div>
+    </div>
+    <div class="top" style="padding: 8px; float: left; width: 100%;">
+        <h1 class="title gray">原文</h1></div>
+    <div class="middle" style="padding: 8px;">
+        <div class="original-text"></div>
+    </div>
+    <div class="bottom" style="padding: 8px;">
+        <div class="activity-links">
+            <span class="activity-link">提供更好的翻译建议</span>
+            <span class="activity-link"></span>
+        </div>
+        <div class="started-activity-container">
+            <hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;">
+            <div class="activity-root"></div>
+        </div>
+    </div>
+    <div class="status-message" style="display: none;"></div>
+</div>
+<div class="goog-te-spinner-pos">
+    <div class="goog-te-spinner-animation">
+        <svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66">
+            <circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+        </svg>
+    </div>
+</div>
+</body>
+
+</html>
